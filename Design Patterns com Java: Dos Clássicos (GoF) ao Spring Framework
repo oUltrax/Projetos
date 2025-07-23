@@ -1,0 +1,148 @@
+// Projeto: Mini Loja com Strategy, GoF e Spring Boot
+// Tecnologias: Java 17, Spring Boot 3, Spring Data JPA, H2/PostgreSQL, Swagger, Railway Ready
+
+// 1️⃣ build.gradle (ou pom.xml se desejar Maven)
+// - Dependências: spring-boot-starter-web, spring-boot-starter-data-jpa, springdoc-openapi-ui, H2 ou PostgreSQL
+
+// 2️⃣ Main Application
+
+package com.miniloja;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MiniLojaApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MiniLojaApplication.class, args);
+    }
+}
+
+// 3️⃣ Entity Produto
+
+package com.miniloja.model;
+
+import jakarta.persistence.*;
+
+@Entity
+public class Produto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
+    private Double preco;
+
+    // Getters e Setters
+}
+
+// 4️⃣ Repository
+
+package com.miniloja.repository;
+
+import com.miniloja.model.Produto;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProdutoRepository extends JpaRepository<Produto, Long> {
+}
+
+// 5️⃣ Strategy Pattern - CalculadoraPreco
+
+package com.miniloja.strategy;
+
+public interface CalculadoraPreco {
+    double calcular(Double preco);
+}
+
+package com.miniloja.strategy;
+
+import org.springframework.stereotype.Component;
+
+@Component("descontoNatal")
+public class DescontoNatal implements CalculadoraPreco {
+    public double calcular(Double preco) {
+        return preco * 0.9;
+    }
+}
+
+package com.miniloja.strategy;
+
+import org.springframework.stereotype.Component;
+
+@Component("descontoBlackFriday")
+public class DescontoBlackFriday implements CalculadoraPreco {
+    public double calcular(Double preco) {
+        return preco * 0.7;
+    }
+}
+
+// 6️⃣ Service com Injeção de Dependência (IoC + Strategy dinâmica)
+
+package com.miniloja.service;
+
+import com.miniloja.model.Produto;
+import com.miniloja.repository.ProdutoRepository;
+import com.miniloja.strategy.CalculadoraPreco;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProdutoService {
+    @Autowired
+    private ProdutoRepository repository;
+
+    @Autowired
+    @Qualifier("descontoNatal") // troque para "descontoBlackFriday" para usar outra estratégia
+    private CalculadoraPreco calculadoraPreco;
+
+    public Produto salvarProduto(Produto produto) {
+        produto.setPreco(calculadoraPreco.calcular(produto.getPreco()));
+        return repository.save(produto);
+    }
+
+    public List<Produto> listarProdutos() {
+        return repository.findAll();
+    }
+}
+
+// 7️⃣ Controller REST
+
+package com.miniloja.controller;
+
+import com.miniloja.model.Produto;
+import com.miniloja.service.ProdutoService;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/produtos")
+public class ProdutoController {
+
+    private final ProdutoService produtoService;
+
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
+
+    @PostMapping
+    public Produto criar(@RequestBody Produto produto) {
+        return produtoService.salvarProduto(produto);
+    }
+
+    @GetMapping
+    public List<Produto> listar() {
+        return produtoService.listarProdutos();
+    }
+}
+
+// 8️⃣ application.properties para Railway ou Local
+
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+springdoc.swagger-ui.path=/swagger-ui.html
