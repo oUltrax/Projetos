@@ -1,0 +1,124 @@
+// Projeto: Banco Digital em Java usando Orientação a Objetos
+// Reforço prático de POO, abstração e estruturação limpa para TCC, estudos e GitHub
+
+// 1. Classe abstrata Conta
+
+package com.bancodigital;
+
+public abstract class Conta {
+    private static int SEQUENCIAL = 1;
+    protected int numero;
+    protected double saldo;
+    protected Cliente cliente;
+
+    public Conta(Cliente cliente) {
+        this.numero = SEQUENCIAL++;
+        this.cliente = cliente;
+    }
+
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+
+    public void sacar(double valor) {
+        saldo -= valor;
+    }
+
+    public void transferir(double valor, Conta destino) {
+        this.sacar(valor);
+        destino.depositar(valor);
+    }
+
+    public void imprimirExtrato() {
+        System.out.println("Cliente: " + cliente.getNome());
+        System.out.println("Número: " + numero);
+        System.out.println("Saldo: R$" + saldo);
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+}
+
+// 2. Classe Cliente
+
+package com.bancodigital;
+
+public class Cliente {
+    private String nome;
+
+    public Cliente(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+// 3. Conta Corrente
+
+package com.bancodigital;
+
+public class ContaCorrente extends Conta {
+    public ContaCorrente(Cliente cliente) {
+        super(cliente);
+    }
+
+    @Override
+    public void imprimirExtrato() {
+        System.out.println("=== Extrato Conta Corrente ===");
+        super.imprimirExtrato();
+    }
+}
+
+// 4. Conta Poupança
+
+package com.bancodigital;
+
+public class ContaPoupanca extends Conta {
+    public ContaPoupanca(Cliente cliente) {
+        super(cliente);
+    }
+
+    @Override
+    public void imprimirExtrato() {
+        System.out.println("=== Extrato Conta Poupança ===");
+        super.imprimirExtrato();
+    }
+}
+
+// 5. Main para testes
+
+package com.bancodigital;
+
+public class BancoDigitalApp {
+    public static void main(String[] args) {
+        Cliente joao = new Cliente("João Nogueira");
+
+        Conta cc = new ContaCorrente(joao);
+        Conta cp = new ContaPoupanca(joao);
+
+        cc.depositar(1000);
+        cc.transferir(300, cp);
+
+        cc.imprimirExtrato();
+        cp.imprimirExtrato();
+    }
+}
+
+// Expansões sugeridas para o GitHub e prática:
+// - Adicionar List<Conta> em uma classe Banco para gerenciar clientes e contas
+// - Criar menus em console para interação com o usuário
+// - Adicionar taxa de saque ou rendimento em Conta Poupança
+// - Persistência com arquivos ou banco de dados simples para treino
+// - Utilizar princípios SOLID e boas práticas de clean code
+
+// Este projeto reforça:
+// ✅ Encapsulamento (atributos privados e acesso controlado)
+// ✅ Abstração (classe abstrata Conta)
+// ✅ Herança (ContaCorrente e ContaPoupanca herdando Conta)
+// ✅ Polimorfismo (sobrescrita imprimirExtrato)
+// ✅ Organização de pacotes
+
+// Pronto para você colocar no GitHub como "Banco Digital Java" com README e evoluir seu portfólio.
