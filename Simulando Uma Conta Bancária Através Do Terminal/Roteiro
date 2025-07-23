@@ -1,0 +1,88 @@
+# 🏦 Projeto: ContaBanco - Java
+
+## 🎯 **Objetivo**
+
+Praticar:
+
+* Sintaxe básica em Java
+* Uso da classe `Scanner` para entrada via terminal
+* Declaração e tipos de variáveis
+* Concatenação de strings
+* Saída formatada no console
+
+---
+
+## 💡 **Descrição do Projeto**
+
+Criação de um **projeto de terminal para cadastro de conta bancária**, recebendo os seguintes dados:
+
+* Número da Agência (String)
+* Número da Conta (int)
+* Nome do Cliente (String)
+* Saldo (double)
+
+Após o preenchimento, o sistema exibe:
+
+> "Olá \[Nome Cliente], obrigado por criar uma conta em nosso banco, sua agência é \[Agencia], conta \[Numero] e seu saldo \[Saldo] já está disponível para saque."
+
+---
+
+## 🗂️ **Estrutura**
+
+* `ContaTerminal.java`: arquivo principal com todo o código e lógica.
+
+---
+
+## 🚀 **Como Executar**
+
+1️⃣ Clone o repositório:
+
+```bash
+git clone https://github.com/seu-usuario/ContaBanco.git
+```
+
+2️⃣ Abra o projeto em sua IDE Java (VS Code ou Eclipse).
+
+3️⃣ Compile e execute `ContaTerminal.java`.
+
+4️⃣ Siga as instruções no console para inserir os dados solicitados.
+
+---
+
+## ✅ **Conceitos aplicados**
+
+* Sintaxe Java
+* `Scanner` para leitura de dados do usuário
+* `System.out.println` para exibir mensagens
+* Concatenação de strings
+* Tipos de variáveis (`String`, `int`, `double`)
+
+---
+
+## 🚀 **Benefícios para seu portfólio**
+
+✅ Projeto simples e didático para treinar Java
+✅ Ótimo exemplo para entrevistas de estágio ou júnior
+✅ Prática real de entrada e saída de dados
+✅ Exercício de lógica e sintaxe
+
+---
+
+## ✏️ **Próximos passos**
+
+* Melhorar validação de entradas.
+* Exibir valores formatados (duas casas decimais no saldo).
+* Evoluir para persistência em arquivo futuramente.
+
+---
+
+## 📧 **Contato**
+
+Dúvidas ou sugestões:
+
+* LinkedIn: \[Seu LinkedIn]
+* Email: \[[seu-email@exemplo.com](mailto:seu-email@exemplo.com)]
+
+---
+
+🚀 **Bons estudos em Java!**
