@@ -1,0 +1,93 @@
+import java.util.*;
+
+public class Sudoku {
+
+    static class Cell {
+        int x, y, value;
+        boolean fixed;
+
+        Cell(int x, int y, int value, boolean fixed) {
+            this.x = x;
+            this.y = y;
+            this.value = value;
+            this.fixed = fixed;
+        }
+    }
+
+    static int[][] board = new int[9][9];
+    static boolean[][] fixed = new boolean[9][9];
+
+    public static void main(String[] args) {
+        if (args.length == 0) {
+            System.out.println("Passe os argumentos do tabuleiro conforme instrução.");
+            return;
+        }
+
+        for (String arg : args) {
+            String[] parts = arg.split(";");
+            String[] pos = parts[0].split(",");
+            int x = Integer.parseInt(pos[0]);
+            int y = Integer.parseInt(pos[1]);
+            int value = Integer.parseInt(parts[1]);
+            boolean isFixed = Boolean.parseBoolean(parts[2]);
+
+            board[y][x] = value;
+            fixed[y][x] = isFixed;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (!isComplete()) {
+            printBoard();
+            System.out.println("Digite no formato: x y valor");
+            int x = scanner.nextInt();
+            int y = scanner.nextInt();
+            int value = scanner.nextInt();
+
+            if (fixed[y][x]) {
+                System.out.println("Você não pode alterar este valor.");
+            } else if (isValid(y, x, value)) {
+                board[y][x] = value;
+            } else {
+                System.out.println("Valor inválido para esta posição.");
+            }
+        }
+
+        System.out.println("Parabéns, você completou o Sudoku!");
+        printBoard();
+    }
+
+    static boolean isComplete() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == 0) return false;
+            }
+        }
+        return true;
+    }
+
+    static boolean isValid(int row, int col, int num) {
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == num || board[i][col] == num) return false;
+        }
+
+        int startRow = row - row % 3;
+        int startCol = col - col % 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[startRow + i][startCol + j] == num) return false;
+            }
+        }
+
+        return true;
+    }
+
+    static void printBoard() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.print((board[i][j] == 0 ? "." : board[i][j]) + " ");
+            }
+            System.out.println();
+        }
+    }
+}
