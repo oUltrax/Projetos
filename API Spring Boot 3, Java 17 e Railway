@@ -1,0 +1,161 @@
+// Projeto: API REST com Spring Boot 3, Java 17 e Railway
+// Tecnologias: Java 17, Spring Boot 3, Spring Data JPA, H2/PostgreSQL, OpenAPI/Swagger, Railway
+
+// Estrutura simplificada para aprendizado, pronto para evoluir em produção
+
+// 1. build.gradle ou pom.xml (se Maven)
+// Exemplo Maven
+
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.seuprojeto</groupId>
+    <artifactId>api-railway</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <properties>
+        <java.version>17</java.version>
+        <spring.boot.version>3.3.0</spring.boot.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+// 2. Main Application
+
+package com.seuprojeto;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ApiRailwayApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ApiRailwayApplication.class, args);
+    }
+}
+
+// 3. Entidade simples
+
+package com.seuprojeto.model;
+
+import jakarta.persistence.*;
+
+@Entity
+public class Produto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
+    private Double preco;
+
+    // getters e setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public Double getPreco() { return preco; }
+    public void setPreco(Double preco) { this.preco = preco; }
+}
+
+// 4. Repository
+
+package com.seuprojeto.repository;
+
+import com.seuprojeto.model.Produto;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProdutoRepository extends JpaRepository<Produto, Long> {
+}
+
+// 5. Controller REST
+
+package com.seuprojeto.controller;
+
+import com.seuprojeto.model.Produto;
+import com.seuprojeto.repository.ProdutoRepository;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/produtos")
+public class ProdutoController {
+
+    private final ProdutoRepository repository;
+
+    public ProdutoController(ProdutoRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
+    public List<Produto> listar() {
+        return repository.findAll();
+    }
+
+    @PostMapping
+    public Produto salvar(@RequestBody Produto produto) {
+        return repository.save(produto);
+    }
+
+    @GetMapping("/{id}")
+    public Produto buscarPorId(@PathVariable Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletar(@PathVariable Long id) {
+        repository.deleteById(id);
+    }
+}
+
+// 6. application.properties para Railway
+
+spring.datasource.url=${DATABASE_URL}
+spring.datasource.username=${DATABASE_USERNAME}
+spring.datasource.password=${DATABASE_PASSWORD}
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+springdoc.api-docs.path=/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+
+// 7. Railway
+// - Crie um novo projeto no Railway
+// - Adicione o PostgreSQL como plugin
+// - Pegue as variáveis DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD
+// - Configure no Railway e faça push do projeto via GitHub
+// - Railway detectará o Spring Boot automaticamente e fará o deploy
+
+// 8. Teste local com H2:
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+// Agora você possui uma API REST limpa, pronta para deploy e expansível
+// para seu portfólio, TCC, produtos ou pequenos SaaS no Railway com custo zero ou baixo, usando tecnologias modernas e escaláveis.
