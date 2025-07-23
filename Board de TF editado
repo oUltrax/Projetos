@@ -1,0 +1,71 @@
+// Projeto: Board de Tarefas Aleatórias com Java e Spring Boot 3
+// Tecnologias: Java 17, Spring Boot 3, Spring Data JPA, H2/PostgreSQL, Swagger
+
+// 1️⃣ Entidade Tarefa
+@Entity
+public class Tarefa {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String descricao;
+    private boolean concluida;
+    // getters e setters
+}
+
+// 2️⃣ Repository
+public interface TarefaRepository extends JpaRepository<Tarefa, Long> {}
+
+// 3️⃣ Service
+@Service
+public class TarefaService {
+    @Autowired
+    private TarefaRepository repository;
+
+    public Tarefa criarTarefaAleatoria() {
+        String[] descricoes = {"Estudar Java", "Ler livro", "Praticar Spring", "Escrever artigo", "Refatorar projeto"};
+        Tarefa tarefa = new Tarefa();
+        tarefa.setDescricao(descricoes[new Random().nextInt(descricoes.length)]);
+        tarefa.setConcluida(false);
+        return repository.save(tarefa);
+    }
+
+    public List<Tarefa> listarTodas() {
+        return repository.findAll();
+    }
+
+    public Tarefa marcarComoConcluida(Long id) {
+        Tarefa tarefa = repository.findById(id).orElseThrow();
+        tarefa.setConcluida(true);
+        return repository.save(tarefa);
+    }
+}
+
+// 4️⃣ Controller
+@RestController
+@RequestMapping("/api/tarefas")
+public class TarefaController {
+    @Autowired
+    private TarefaService service;
+
+    @PostMapping("/aleatoria")
+    public Tarefa criarTarefaAleatoria() {
+        return service.criarTarefaAleatoria();
+    }
+
+    @GetMapping
+    public List<Tarefa> listar() {
+        return service.listarTodas();
+    }
+
+    @PutMapping("/{id}/concluir")
+    public Tarefa concluir(@PathVariable Long id) {
+        return service.marcarComoConcluida(id);
+    }
+}
+
+// 5️⃣ application.properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.jpa.hibernate.ddl-auto=update
+springdoc.swagger-ui.path=/swagger-ui.html
+
+// ✅ Pronto para praticar CRUD, gerar tarefas aleatórias e gerenciar status em API REST de forma didática.
