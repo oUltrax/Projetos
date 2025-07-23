@@ -1,0 +1,148 @@
+// Projeto: Desafio de Fundamentos Java - ToDo List
+// Autor: Joao Nogueira
+// Objetivo: Praticar fluxos condicionais, repetição e exceções em Java
+
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+class Tarefa {
+    private String titulo;
+    private boolean concluida;
+
+    public Tarefa(String titulo) {
+        this.titulo = titulo;
+        this.concluida = false;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public boolean isConcluida() {
+        return concluida;
+    }
+
+    public void concluir() {
+        this.concluida = true;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + (concluida ? "X" : " ") + "] " + titulo;
+    }
+}
+
+class GerenciadorTarefas {
+    private ArrayList<Tarefa> tarefas = new ArrayList<>();
+
+    public void adicionarTarefa(String titulo) {
+        tarefas.add(new Tarefa(titulo));
+        System.out.println("Tarefa adicionada com sucesso!");
+    }
+
+    public void listarTarefas() {
+        if (tarefas.isEmpty()) {
+            System.out.println("Nenhuma tarefa cadastrada.");
+        } else {
+            System.out.println("\n--- Lista de Tarefas ---");
+            for (int i = 0; i < tarefas.size(); i++) {
+                System.out.println(i + ": " + tarefas.get(i));
+            }
+        }
+    }
+
+    public void concluirTarefa(int indice) throws Exception {
+        if (indice >= 0 && indice < tarefas.size()) {
+            tarefas.get(indice).concluir();
+            System.out.println("Tarefa concluída com sucesso!");
+        } else {
+            throw new Exception("Índice inválido para conclusão.");
+        }
+    }
+
+    public void removerTarefa(int indice) throws Exception {
+        if (indice >= 0 && indice < tarefas.size()) {
+            tarefas.remove(indice);
+            System.out.println("Tarefa removida com sucesso!");
+        } else {
+            throw new Exception("Índice inválido para remoção.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        GerenciadorTarefas gerenciador = new GerenciadorTarefas();
+
+        boolean rodando = true;
+
+        do {
+            System.out.println("\n--- Menu ---");
+            System.out.println("1 - Adicionar Tarefa");
+            System.out.println("2 - Listar Tarefas");
+            System.out.println("3 - Concluir Tarefa");
+            System.out.println("4 - Remover Tarefa");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha uma opção: ");
+
+            int opcao = -1;
+
+            try {
+                opcao = scanner.nextInt();
+                scanner.nextLine(); // consumir quebra de linha
+
+                switch (opcao) {
+                    case 1:
+                        System.out.print("Digite o título da tarefa: ");
+                        String titulo = scanner.nextLine();
+                        gerenciador.adicionarTarefa(titulo);
+                        break;
+                    case 2:
+                        gerenciador.listarTarefas();
+                        break;
+                    case 3:
+                        gerenciador.listarTarefas();
+                        System.out.print("Digite o índice da tarefa a concluir: ");
+                        int indiceConcluir = scanner.nextInt();
+                        scanner.nextLine();
+                        try {
+                            gerenciador.concluirTarefa(indiceConcluir);
+                        } catch (Exception e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
+                        break;
+                    case 4:
+                        gerenciador.listarTarefas();
+                        System.out.print("Digite o índice da tarefa a remover: ");
+                        int indiceRemover = scanner.nextInt();
+                        scanner.nextLine();
+                        try {
+                            gerenciador.removerTarefa(indiceRemover);
+                        } catch (Exception e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
+                        break;
+                    case 0:
+                        rodando = false;
+                        System.out.println("Saindo do sistema. Até logo!");
+                        break;
+                    default:
+                        System.out.println("Opção inválida, tente novamente.");
+                        break;
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Digite um número válido.");
+                scanner.nextLine(); // limpar o buffer
+            } finally {
+                System.out.println("Operação finalizada.\n");
+            }
+        } while (rodando);
+
+        scanner.close();
+    }
+}
+
+
